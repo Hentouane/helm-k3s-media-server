@@ -1,3 +1,4 @@
+# Jackett values
 jackett:
   env:
     - name: PUID
@@ -37,11 +38,13 @@ jackett:
     - name: "downloads-data"
       mountPath: "/downloads"
 
+# Jellyfin values
 jellyfin:
   dataPvcName: jellyfin-data-pvc
   hostname: jellyfin.radi
   svcName: jellyfin-svc
 
+# Radarr values
 radarr:
   env:
     - name: PUID
@@ -87,6 +90,7 @@ radarr:
     - name: movies
       mountPath: "/movies"
 
+# Sonarr Values
 sonarr:
   env:
     - name: PUID
@@ -132,6 +136,7 @@ sonarr:
     - name: tv
       mountPath: "/tv"
 
+# Transmission-openvpn values
 transmission:
   env:
     - name: OPENVPN_PROVIDER
