@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: sonarr
+  name: sonarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  template:
+    metadata:
+      labels:
+        app: sonarr
+    spec:
+  {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+  {{- end }}
+      volumes:
+{{ toYaml .Values.volumes | indent 6 }}
+      containers:
+      - image: linuxserver/sonarr:latest
+        imagePullPolicy: Always
+        name: sonarr
+        env:
+{{ toYaml .Values.env | indent 12 }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        ports:
+        - name: http
+          containerPort: 8989
+          protocol: TCP
+        volumeMounts:
+{{ toYaml .Values.volumeMounts | indent 12 }}

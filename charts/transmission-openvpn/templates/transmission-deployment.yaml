@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transmission-openvpn
+  labels:
+    app: transmission-openvpn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transmission-openvpn
+  template:
+    metadata:
+      labels:
+        app: transmission-openvpn
+    spec:
+  {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+  {{- end }}
+      volumes:
+{{ toYaml .Values.volumes | indent 6 }}
+      containers:
+        - name: transmission-openvpn
+          image: haugene/transmission-openvpn:latest
+          imagePullPolicy: Always
+          env:
+{{ toYaml .Values.env | indent 12 }}
+          ports:
+            - name: http
+              containerPort: 9091
+              protocol: TCP
+          securityContext:
+            capabilities:
+                add:
+                - NET_ADMIN
+          volumeMounts:
+{{ toYaml .Values.volumeMounts | indent 12 }}

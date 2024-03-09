@@ -1,0 +1,4 @@
+jellyfin:
+  dataPvcName: jellyfin-data-pvc
+  hostname: jellyfin.radi
+  svcName: jellyfin-svc

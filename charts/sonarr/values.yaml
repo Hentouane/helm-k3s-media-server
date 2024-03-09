@@ -1,0 +1,43 @@
+env:
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+
+ingress:
+  hostname: sonarr.radi
+
+nodeSelector:
+  kubernetes.io/arch: amd64
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 0.1
+  limits:
+    memory: 256Mi
+    cpu: 0.5
+
+svcName: sonarr-svc
+
+volumes:
+  - name: configs-data
+    hostPath:
+      path: /media/configs/sonarr
+      type: Directory
+  - name: downloads-data
+    hostPath:
+      path: /media/downloads/transmission
+      type: Directory
+  - name: tv
+    hostPath:
+      path: /media/jellyfin/tv
+      type: Directory
+
+volumeMounts:
+  - name: configs-data
+    mountPath: "/config"
+  - name: downloads-data
+    mountPath: "/downloads/transmission"
+  - name: tv
+    mountPath: "/tv"

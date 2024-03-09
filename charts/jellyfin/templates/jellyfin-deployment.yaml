@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: jellyfin
+  name: jellyfin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jellyfin
+  template:
+    metadata:
+      labels:
+        app: jellyfin
+    spec:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      containers:
+      - image: linuxserver/jellyfin
+        name: jellyfin
+        resources:
+          requests:
+            cpu: 2
+            amd.com/gpu: 1
+          limits:
+            cpu: 4
+            amd.com/gpu: 1
+        ports:
+        - name: web
+          containerPort: 8096
+          protocol: TCP
+        - name: local-discovery
+          containerPort: 7359
+          protocol: TCP
+        - name: dlna
+          containerPort: 1900
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /config
+          name: data
+        - mountPath: /data/movies
+          name: movies
+        - mountPath: /data/tv
+          name: tv
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: {{ .Values.jellyfin.dataPvcName }}
+      - name: movies
+        hostPath:
+          path: /media/jellyfin/movies
+          type: Directory
+      - name: tv
+        hostPath:
+          path: /media/jellyfin/tv
+          type: Directory

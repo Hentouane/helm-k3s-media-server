@@ -1,0 +1,50 @@
+env:
+  - name: OPENVPN_PROVIDER
+    value: "PIA" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
+  - name: OPENVPN_USERNAME
+    valueFrom: # Reference to the secret | openvpn.username
+      secretKeyRef:
+        name: "openvpn"
+        key: "username"
+  - name: OPENVPN_PASSWORD
+    valueFrom: # Reference to the secret | openvpn.password
+      secretKeyRef:
+        name: "openvpn"
+        key: "password"
+  - name: OPENVPN_CONFIG
+    value: "ca_montreal" # Country where we want to download over VPN
+  - name: LOCAL_NETWORK
+    value: "192.168.1.0/24"
+  - name: TRANSMISSION_PEER_PORT
+    value: "47444"
+  - name: TRANSMISSION_DOWNLOAD_DIR
+    value: "/downloads/transmission"
+  - name: PUID
+    value: "1000"
+  - name: PGID
+    value: "1000"
+
+ingress:
+  hostname: transmission.radi
+
+nodeSelector:
+  kubernetes.io/arch: amd64
+
+svcName: transmission-openvpn-svc
+
+volumes:
+  - name: configs-data
+    hostPath:
+      path: /media/configs/transmission-data
+      type: Directory
+  - name: downloads-data
+    hostPath:
+      path: /media/downloads/transmission
+      type: Directory
+
+volumeMounts:
+  - name: "configs-data"
+    mountPath: "/data"
+  - name: "downloads-data"
+    mountPath: "/downloads/transmission"
+

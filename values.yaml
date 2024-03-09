@@ -1,0 +1,185 @@
+jackett:
+  env:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+
+  ingress:
+    hostname: jackett.radi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+    limits:
+      memory: 256Mi
+      cpu: 0.5
+
+  svcName: jackett-svc
+
+  volumes:
+    - name: configs-data
+      hostPath:
+        path: /media/configs/jackett
+        type: Directory
+    - name: downloads-data
+      hostPath:
+        path: /media/downloads/jackett
+        type: Directory
+
+  volumeMounts:
+    - name: "configs-data"
+      mountPath: "/config"
+    - name: "downloads-data"
+      mountPath: "/downloads"
+
+jellyfin:
+  dataPvcName: jellyfin-data-pvc
+  hostname: jellyfin.radi
+  svcName: jellyfin-svc
+
+radarr:
+  env:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+
+  ingress:
+    hostname: radarr.radi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+    limits:
+      memory: 256Mi
+      cpu: 0.5
+
+  svcName: radarr-svc
+
+  volumes:
+    - name: configs-data
+      hostPath:
+        path: /media/configs/radarr
+        type: Directory
+    - name: downloads-data
+      hostPath:
+        path: /media/downloads/transmission
+        type: Directory
+    - name: movies
+      hostPath:
+        path: /media/jellyfin/movies
+        type: Directory
+
+  volumeMounts:
+    - name: configs-data
+      mountPath: "/config"
+    - name: downloads-data
+      mountPath: "/downloads/transmission"
+    - name: movies
+      mountPath: "/movies"
+
+sonarr:
+  env:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+
+  ingress:
+    hostname: sonarr.radi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+    limits:
+      memory: 256Mi
+      cpu: 0.5
+
+  svcName: sonarr-svc
+
+  volumes:
+    - name: configs-data
+      hostPath:
+        path: /media/configs/sonarr
+        type: Directory
+    - name: downloads-data
+      hostPath:
+        path: /media/downloads/transmission
+        type: Directory
+    - name: tv
+      hostPath:
+        path: /media/jellyfin/tv
+        type: Directory
+
+  volumeMounts:
+    - name: configs-data
+      mountPath: "/config"
+    - name: downloads-data
+      mountPath: "/downloads/transmission"
+    - name: tv
+      mountPath: "/tv"
+
+transmission:
+  env:
+    - name: OPENVPN_PROVIDER
+      value: "PIA" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
+    - name: OPENVPN_USERNAME
+      valueFrom: # Reference to the secret | openvpn.username
+        secretKeyRef:
+          name: "openvpn"
+          key: "username"
+    - name: OPENVPN_PASSWORD
+      valueFrom: # Reference to the secret | openvpn.password
+        secretKeyRef:
+          name: "openvpn"
+          key: "password"
+    - name: OPENVPN_CONFIG
+      value: "ca_montreal" # Country where we want to download over VPN
+    - name: LOCAL_NETWORK
+      value: "192.168.1.0/24"
+    - name: TRANSMISSION_PEER_PORT
+      value: "47444"
+    - name: TRANSMISSION_DOWNLOAD_DIR
+      value: "/downloads/transmission"
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+
+  ingress:
+    hostname: transmission.radi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  svcName: transmission-openvpn-svc
+
+  volumes:
+    - name: configs-data
+      hostPath:
+        path: /media/configs/transmission-data
+        type: Directory
+    - name: downloads-data
+      hostPath:
+        path: /media/downloads/transmission
+        type: Directory
+
+  volumeMounts:
+    - name: "configs-data"
+      mountPath: "/data"
+    - name: "downloads-data"
+      mountPath: "/downloads/transmission"
+
