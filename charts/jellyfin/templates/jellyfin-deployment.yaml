@@ -16,6 +16,8 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/arch: amd64
+      volumes:
+{{ toYaml .Values.volumes | indent 6 }}
       containers:
       - image: linuxserver/jellyfin
         name: jellyfin
@@ -37,21 +39,4 @@ spec:
           containerPort: 1900
           protocol: TCP
         volumeMounts:
-        - mountPath: /config
-          name: data
-        - mountPath: /data/movies
-          name: movies
-        - mountPath: /data/tv
-          name: tv
-      volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: {{ .Values.jellyfin.dataPvcName }}
-      - name: movies
-        hostPath:
-          path: /media/jellyfin/movies
-          type: Directory
-      - name: tv
-        hostPath:
-          path: /media/jellyfin/tv
-          type: Directory
+{{ toYaml .Values.volumeMounts | indent 12 }}

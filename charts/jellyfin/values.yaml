@@ -1,4 +1,19 @@
-jellyfin:
-  dataPvcName: jellyfin-data-pvc
-  hostname: jellyfin.radi
-  svcName: jellyfin-svc
+hostname: jellyfin.radi
+
+svcName: jellyfin-svc
+
+volumes:
+  - name: media-ssd
+    persistentVolumeClaim:
+      claimName: "media-ssd-pvc"
+
+volumeMounts:
+  - name: "media-ssd"
+    mountPath: "/config"
+    subPath: "configs/jellyfin"
+  - name: "media-ssd"
+    mountPath: "/data/movies"
+    subPath: "jellyfin/movies"
+  - name: "media-ssd"
+    mountPath: "/data/tv"
+    subPath: "jellyfin/tv"

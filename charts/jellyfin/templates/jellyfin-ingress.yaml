@@ -5,12 +5,12 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: {{ .Values.jellyfin.hostname }}
+  - host: {{ .Values.hostname }}
     http:
       paths:
       - backend:
           service:
-            name: {{ .Values.jellyfin.svcName }}
+            name: {{ .Values.svcName }}
             port:
               number: 8096
         path: /

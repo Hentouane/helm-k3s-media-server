@@ -1,3 +1,11 @@
+# Storage values
+storage:
+  capacity:
+    storage: "500Gi"
+  hostPath: /mnt/media/media
+  pvName: "media-ssd-pv"
+  pvcName: &storagePvcName "media-ssd-pvc"
+
 # Jackett values
 jackett:
   env:
@@ -23,26 +31,39 @@ jackett:
   svcName: jackett-svc
 
   volumes:
-    - name: configs-data
-      hostPath:
-        path: /media/configs/jackett
-        type: Directory
-    - name: downloads-data
-      hostPath:
-        path: /media/downloads/jackett
-        type: Directory
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
 
   volumeMounts:
-    - name: "configs-data"
+    - name: "media-ssd"
       mountPath: "/config"
-    - name: "downloads-data"
+      subPath: "configs/jackett"
+    - name: "media-ssd"
       mountPath: "/downloads"
+      subPath: "downloads/jackett"
 
 # Jellyfin values
 jellyfin:
-  dataPvcName: jellyfin-data-pvc
   hostname: jellyfin.radi
   svcName: jellyfin-svc
+
+  volumes:
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
+
+
+  volumeMounts:
+    - name: "media-ssd"
+      mountPath: "/config"
+      subPath: "configs/jellyfin"
+    - name: "media-ssd"
+      mountPath: "/data/movies"
+      subPath: "jellyfin/movies"
+    - name: "media-ssd"
+      mountPath: "/data/tv"
+      subPath: "jellyfin/tv"
 
 # Radarr values
 radarr:
@@ -69,26 +90,20 @@ radarr:
   svcName: radarr-svc
 
   volumes:
-    - name: configs-data
-      hostPath:
-        path: /media/configs/radarr
-        type: Directory
-    - name: downloads-data
-      hostPath:
-        path: /media/downloads/transmission
-        type: Directory
-    - name: movies
-      hostPath:
-        path: /media/jellyfin/movies
-        type: Directory
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
 
   volumeMounts:
-    - name: configs-data
+    - name: media-ssd
       mountPath: "/config"
-    - name: downloads-data
+      subPath: "configs/radarr"
+    - name: media-ssd
       mountPath: "/downloads/transmission"
-    - name: movies
+      subPath: "downloads/transmission"
+    - name: media-ssd
       mountPath: "/movies"
+      subPath: "jellyfin/movies"
 
 # Sonarr Values
 sonarr:
@@ -115,29 +130,23 @@ sonarr:
   svcName: sonarr-svc
 
   volumes:
-    - name: configs-data
-      hostPath:
-        path: /media/configs/sonarr
-        type: Directory
-    - name: downloads-data
-      hostPath:
-        path: /media/downloads/transmission
-        type: Directory
-    - name: tv
-      hostPath:
-        path: /media/jellyfin/tv
-        type: Directory
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
 
   volumeMounts:
-    - name: configs-data
+    - name: media-ssd
       mountPath: "/config"
-    - name: downloads-data
+      subPath: "configs/sonarr"
+    - name: media-ssd
       mountPath: "/downloads/transmission"
-    - name: tv
+      subPath: "downloads/transmission"
+    - name: media-ssd
       mountPath: "/tv"
+      subPath: "jellyfin/tv"
 
 # Transmission-openvpn values
-transmission:
+transmission-openvpn:
   env:
     - name: OPENVPN_PROVIDER
       value: "PIA" # VPN provider. List of supported providers: https://haugene.github.io/docker-transmission-openvpn/supported-providers/
@@ -173,18 +182,15 @@ transmission:
   svcName: transmission-openvpn-svc
 
   volumes:
-    - name: configs-data
-      hostPath:
-        path: /media/configs/transmission-data
-        type: Directory
-    - name: downloads-data
-      hostPath:
-        path: /media/downloads/transmission
-        type: Directory
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
 
   volumeMounts:
-    - name: "configs-data"
+    - name: "media-ssd"
       mountPath: "/data"
-    - name: "downloads-data"
+      subPath: "configs/transmission-data"
+    - name: "media-ssd"
       mountPath: "/downloads/transmission"
+      subPath: "downloads/transmission"
 
