@@ -26,6 +26,10 @@ spec:
         name: bazarr
         env:
 {{ toYaml .Values.env | indent 12 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 6767
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         ports:

@@ -26,6 +26,10 @@ spec:
         name: sonarr
         env:
 {{ toYaml .Values.env | indent 12 }}
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: 8989
         resources:
 {{ toYaml .Values.resources | indent 12 }}
         ports:
