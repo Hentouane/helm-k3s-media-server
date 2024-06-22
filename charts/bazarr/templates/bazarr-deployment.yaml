@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bazarr
+  name: bazarr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+  {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+  {{- end }}
+      volumes:
+{{ toYaml .Values.volumes | indent 6 }}
+      containers:
+      - image: linuxserver/bazarr:latest
+        imagePullPolicy: Always
+        name: bazarr
+        env:
+{{ toYaml .Values.env | indent 12 }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+        ports:
+        - name: http
+          containerPort: 6767
+          protocol: TCP
+        volumeMounts:
+{{ toYaml .Values.volumeMounts | indent 12 }}

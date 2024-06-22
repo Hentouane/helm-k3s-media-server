@@ -6,6 +6,46 @@ storage:
   pvName: "media-ssd-pv"
   pvcName: &storagePvcName "media-ssd-pvc"
 
+# Bazarr values
+bazarr:
+  env:
+    - name: PUID
+      value: "1000"
+    - name: PGID
+      value: "1000"
+
+  ingress:
+    hostname: bazarr.radi
+
+  nodeSelector:
+    kubernetes.io/arch: amd64
+
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 0.1
+    limits:
+      memory: 256Mi
+      cpu: 0.5
+
+  svcName: bazarr-svc
+
+  volumes:
+    - name: media-ssd
+      persistentVolumeClaim:
+        claimName: *storagePvcName
+
+  volumeMounts:
+    - name: media-ssd
+      mountPath: "/config"
+      subPath: "configs/bazarr"
+    - name: media-ssd
+      mountPath: "/tv"
+      subPath: "jellyfin/tv"
+    - name: media-ssd
+      mountPath: "/movies"
+      subPath: "jellyfin/movies"
+
 # Jackett values
 jackett:
   env:
