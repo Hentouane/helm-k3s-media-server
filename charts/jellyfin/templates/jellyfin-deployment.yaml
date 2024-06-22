@@ -6,6 +6,8 @@ metadata:
   name: jellyfin
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: jellyfin
@@ -14,6 +16,7 @@ spec:
       labels:
         app: jellyfin
     spec:
+      hostname: jellyfin
       nodeSelector:
         kubernetes.io/arch: amd64
       volumes:
